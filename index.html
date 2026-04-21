@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SEN Course Rep Voting</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+.container {
+    background: #1e1e1e;
+    padding: 30px;
+    border-radius: 15px;
+    width: 320px;
+    margin: auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.6);
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+input, select, button {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+input, select {
+    background: #f2f2f2;
+    color: #000;
+}
+
+button {
+    background:rgb(82, 223, 100) ;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background:rgb(82, 223, 100);
+}
+
+button.reset {
+    background: #ff4d4d;
+    color: white;
+}
+
+button.reset:hover {
+    background: #cc0000;
+}
+
+.results {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.bar {
+    height: 10px;
+    background: rgb(82, 223, 100);
+    margin-top: 5px;
+    border-radius: 5px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>SEN Course Rep Election</h2>
+
+<input type="email" id="email" placeholder="Enter your email" />
+
+<select id="vote">
+    <option value="James">James Yakubu</option>
+    <option value="Tony">Tony Elvis</option>
+    <option value="Cynthia">Cynthia Mercy</option>
+</select>
+
+<button onclick="submitVote()">Vote!</button>
+<button class="reset" onclick="clearVotes()">Reset Votes</button>
+
+<h2>Results</h2>
+
+<div class="results">
+    <p>James Yakubu: <span id="JamesCount">0</span></p>
+    <div class="bar" id="bar1"></div>
+
+    <p>Tony Elvis: <span id="TonyCount">0</span></p>
+    <div class="bar" id="bar2"></div>
+
+    <p>Cynthia Mercy: <span id="CynthiaCount">0</span></p>
+    <div class="bar" id="bar3"></div>
+</div>
+
+</div>
+
+<script>
+
+function submitVote() {
+    var email = document.getElementById("email").value;
+    var vote = document.getElementById("vote").value;
+
+    var emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+
+    if (email === "") {
+        alert("Please enter your email");
+        return;
+    }
+
+    if (!email.match(emailPattern)) {
+        alert("Please enter a valid email address");
+        return;
+    }
+
+    if (localStorage.getItem(email)) {
+        alert("This email has already voted");
+    } else {
+        localStorage.setItem(email, vote);
+        alert("Vote submitted successfully!");
+        updateResults();
+    }
+}
+
+function updateResults() {
+    var counts = { James: 0, Tony: 0, Cynthia: 0 };
+
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        var vote = localStorage.getItem(key);
+
+        if (counts[vote] !== undefined) {
+            counts[vote]++;
+        }
+    }
+
+    var total = counts.James + counts.Tony + counts.Cynthia;
+
+    document.getElementById("JamesCount").innerText = counts.James;
+    document.getElementById("TonyCount").innerText = counts.Tony;
+    document.getElementById("CynthiaCount").innerText = counts.Cynthia;
+
+    document.getElementById("bar1").style.width = total ? (counts.James / total * 100) + "%" : "0%";
+    document.getElementById("bar2").style.width = total ? (counts.Tony / total * 100) + "%" : "0%";
+    document.getElementById("bar3").style.width = total ? (counts.Cynthia / total * 100) + "%" : "0%";
+}
+
+function clearVotes() {
+    localStorage.clear();
+    updateResults();
+    alert("All votes have been reset");
+}
+
+updateResults();
+
+</script>
+
+</body>
+</html>
